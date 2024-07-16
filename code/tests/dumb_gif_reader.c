@@ -80,7 +80,7 @@ int main(int argc, char **argv) {
 		c = fgetc(fp);
 		i++;
 		i %= LINE_LIMIT;
-		printf("0x%02X%s", c, i ? " " : "\n");
+		printf("0x%02X%c", c, i ? ' ' : '\n');
 	} while (prevC != 0 || c != ';');
 
 	printf("%s%s--- Stop reading file ---%s\n",
