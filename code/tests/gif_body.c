@@ -28,7 +28,7 @@
 		       __func__, ##__VA_ARGS__);	\
 	} while(0)
 
-#if 0
+#if 1
 #define DBG_ERR(FMT, ...)				\
 	do {						\
 		printf("[%s] " RED(BOLD_SET) FMT NC,	\
@@ -411,7 +411,7 @@ int main(int argc, char **argv) {
 		//if (totalBytesOfDatas > 255)	goto remaining_datas;
 
 		unsigned char *readData = (unsigned char *)
-					  malloc(totalBytesOfDatas);
+					  malloc(nSubBlocks > 1 ? 255 : c);
 		if ( ! readData ) {
 			LOG_ERR("Could not allocate readData...\n");
 			fclose(fp);
@@ -426,6 +426,10 @@ int main(int argc, char **argv) {
 			fclose(fp);
 			return -1;
 		}
+
+		/* Set everything to "-1" to identify 
+		 * which section is filled through uncompress() */
+		memset(uncompressed, (char)(-1), wFrame * hFrame);
 
 		prevC = 0;
 		for (i = 0; i < nSubBlocks; i++) {
@@ -451,7 +455,7 @@ int main(int argc, char **argv) {
 		for (i = 0; i < wFrame * hFrame; i++)
 			printf("0x%02X%c", uncompressed[i],
 			       ((i+1) % LINE_LIMIT) ? ' ' : '\n');
-		printf("%s", ((i+1) % LINE_LIMIT) ? "\n" : "");
+		printf("%s", ((i+1) % LINE_LIMIT) ? "" : "\n");
 		/*for (i = 0; i < wFrame * hFrame; i++)
 			printf("%c%s", uncompressed[i] ? '0' : ' ',
 			       ((i+1) % wFrame) ? "" : "\n");*/
